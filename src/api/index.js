@@ -7,16 +7,16 @@ import 'es6-promise/auto'
 import config from '../config'
 import { onlyTitle, onlyDate } from '../utils'
 
-const FETCH_LIST_URL = (() => {
+const getListURL = () => {
   let url = `https://api.github.com/repos/${config.repo}/contents/`
   config.path && (url += config.path)
   config.branch && (url += `?ref=${config.branch}`)
   return url
-})()
+}
 
-const FETCH_POST_URL = (hash => {
+const getPostURL = hash => {
   return `https://api.github.com/repos/${config.repo}/git/blobs/${hash}`
-})()
+}
 
 const Cache = {
   get: (key) => {
@@ -43,9 +43,8 @@ export default {
     if (Cache.has('list')) {
       return Promise.resolve(Cache.get('list'))
     } else {
-      console.log(FETCH_LIST_URL)
       return axios
-        .get(FETCH_LIST_URL)
+        .get(getListURL())
         .then(res => res.data)
         .then(arr => {
           const list = arr.map(({ name, sha, size }) => ({
@@ -66,8 +65,9 @@ export default {
     if (Cache.has(cacheKey)) {
       return Promise.resolve(Cache.get(cacheKey))
     } else {
+      console.log(getPostURL(hash))
       return axios
-        .get(FETCH_POST_URL, httpOpts)
+        .get(getPostURL(hash), httpOpts)
         .then(res => res.data)
         .then(content => {
           Cache.set(cacheKey, content)
