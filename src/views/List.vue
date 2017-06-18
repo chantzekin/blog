@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ul>
+    <ul class="list">
       <li v-for="{ title, sha, date } in list" :key="sha">
         <h3>{{ date | formatDate }}</h3>
         <h2>
