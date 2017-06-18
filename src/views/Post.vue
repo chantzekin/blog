@@ -74,9 +74,11 @@ export default {
 
           const postIndex = list.findIndex(item => (item.title === post.title))
 
+          console.log(postIndex)
+
           this.index = postIndex
-          this.hasOlder = postIndex > 0
-          this.hasNewer = postIndex !== list.length - 1 && postIndex !== 0
+          this.hasOlder = postIndex >= 0 && postIndex !== list.length - 1
+          this.hasNewer = postIndex > 0
           this.list = list
         })
         .catch(err => {
