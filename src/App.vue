@@ -4,10 +4,10 @@
       <router-link to="/">{{title}}</router-link>
     </div>
     <p class="links">
-      <a href="/" target="_blank">
+      <a href="javascript:;" target="_blank">
         <i class="iconfont">&#xe618;</i>
       </a>
-      <a href="/" target="_blank">
+      <a href="https://github.com/Naraku777" target="_blank">
         <i class="iconfont">&#xe735;</i>
       </a>
     </p>
