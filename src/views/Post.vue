@@ -104,8 +104,5 @@ export default {
 </script>
 
 <style scoped>
-.main h3, .content h3 {
-  position: initial;
-}
 </style>
 
