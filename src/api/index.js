@@ -53,6 +53,9 @@ export default {
             sha,
             size
           }))
+          list.sort((a, b) => {
+            return ((new Date(a.date)).getTime() < (new Date(b.date)).getTime())
+          })
           Cache.set('list', list)
           return list
         })
@@ -65,7 +68,6 @@ export default {
     if (Cache.has(cacheKey)) {
       return Promise.resolve(Cache.get(cacheKey))
     } else {
-      console.log(getPostURL(hash))
       return axios
         .get(getPostURL(hash), httpOpts)
         .then(res => res.data)

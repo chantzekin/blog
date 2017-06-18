@@ -5,8 +5,8 @@
       <h1>{{ title }}</h1>
       <article class="content" v-html="htmlFromMarkdown"></article>
 
-      <a id="newer" class="blog-nav">&lt;&nbsp;NEWER</a>
-      <a id="older" class="blog-nav">OLDER&nbsp;&gt;</a>
+      <a id="newer" class="blog-nav" v-if="hasOlder" @click="to(index - 1)">&lt;&nbsp;NEWER</a>
+      <a id="older" class="blog-nav" v-if="hasNewer" @click="to(index + 1)">OLDER&nbsp;&gt;</a>
     </div>
   </div>
 </template>
@@ -28,8 +28,8 @@ export default {
       title: '',
       date: null,
       content: '',
-      hasNext: false,
-      hasPrev: false,
+      hasOlder: false,
+      hasNewer: false,
       index: 0,
       list: []
     }
@@ -51,10 +51,10 @@ export default {
     to(index) {
       const toPost = this.list[index]
 
-      this.router.push({
+      this.$router.push({
         name: 'post',
         params: {
-          hash: toPost.hash
+          hash: toPost.sha
         }
       })
     },
@@ -62,35 +62,22 @@ export default {
     loadPost() {
       const hash = this.$route.params.hash
 
-      Promise.all([
-        api.fetchList(),
-        api.fetchPost(hash)
-      ]).then(res => {
-        const list = res[0]
-        let post = fm(res[1])
+      Promise
+        .all([
+          api.fetchList(),
+          api.fetchPost(hash)
+        ])
+        .then(res => {
+          const list = res[0]
+          let post = fm(res[1])
+          post = this.setPost(post)
 
-        post = this.setPost(post)
+          const postIndex = list.findIndex(item => (item.title === post.title))
 
-        let postIndex = list.findIndex(item => console.log(item.title))
-
-        console.log(post.title)
-
-      })
-
-      api
-        .fetchList()
-        .then(list => {
+          this.index = postIndex
+          this.hasOlder = postIndex > 0
+          this.hasNewer = postIndex !== list.length - 1
           this.list = list
-        })
-        .catch(err => {
-          console.log(err)
-        })
-
-      api
-        .fetchPost(hash)
-        .then(md => {
-          // Parse front-matter
-          // https://github.com/jxson/front-matter#fmstring
         })
         .catch(err => {
           console.log(err)
@@ -107,6 +94,10 @@ export default {
 
       return { content: this.content, date: this.date, title: this.title }
     }
+  },
+
+  watch: {
+    '$route': 'loadPost'
   }
 
 }
