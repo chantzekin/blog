@@ -1,9 +1,12 @@
 <template>
   <div>
     <div class="post">
-      <h3 class="date">{{ date | formatDate }}</h3>
+      <h3 class="date" v-if="date">{{ date | formatDate }}</h3>
       <h1>{{ title }}</h1>
       <article class="content" v-html="htmlFromMarkdown"></article>
+
+      <a id="newer" class="blog-nav">&lt;&nbsp;NEWER</a>
+      <a id="older" class="blog-nav">OLDER&nbsp;&gt;</a>
     </div>
   </div>
 </template>
@@ -24,7 +27,11 @@ export default {
     return {
       title: '',
       date: null,
-      content: ''
+      content: '',
+      hasNext: false,
+      hasPrev: false,
+      index: 0,
+      list: []
     }
   },
 
@@ -41,25 +48,64 @@ export default {
   },
 
   methods: {
+    to(index) {
+      const toPost = this.list[index]
+
+      this.router.push({
+        name: 'post',
+        params: {
+          hash: toPost.hash
+        }
+      })
+    },
+
     loadPost() {
       const hash = this.$route.params.hash
+
+      Promise.all([
+        api.fetchList(),
+        api.fetchPost(hash)
+      ]).then(res => {
+        const list = res[0]
+        let post = fm(res[1])
+
+        post = this.setPost(post)
+
+        let postIndex = list.findIndex(item => console.log(item.title))
+
+        console.log(post.title)
+
+      })
+
+      api
+        .fetchList()
+        .then(list => {
+          this.list = list
+        })
+        .catch(err => {
+          console.log(err)
+        })
 
       api
         .fetchPost(hash)
         .then(md => {
           // Parse front-matter
           // https://github.com/jxson/front-matter#fmstring
-          const content = fm(md)
-          this.content = content.body
-          this.title = content.attributes.title
-          this.date = content.attributes.date
-
-          window.document.title = `${this.title} - ${config.blogTitle}`
         })
         .catch(err => {
           console.log(err)
           this.$router.replace('/')
         })
+    },
+
+    setPost(fm) {
+      this.content = fm.body
+      this.title = fm.attributes.title
+      this.date = fm.attributes.date
+
+      window.document.title = `${this.title} - ${config.blogTitle}`
+
+      return { content: this.content, date: this.date, title: this.title }
     }
   }
 
