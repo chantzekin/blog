@@ -5,8 +5,8 @@
       <h1>{{ title }}</h1>
       <article class="content" v-html="htmlFromMarkdown"></article>
 
-      <a id="newer" class="blog-nav" v-if="hasOlder" @click="to(index - 1)">&lt;&nbsp;NEWER</a>
-      <a id="older" class="blog-nav" v-if="hasNewer" @click="to(index + 1)">OLDER&nbsp;&gt;</a>
+      <a id="newer" class="blog-nav" v-if="hasNewer" @click="to(index - 1)">&lt;&nbsp;NEWER</a>
+      <a id="older" class="blog-nav" v-if="hasOlder" @click="to(index + 1)">OLDER&nbsp;&gt;</a>
     </div>
   </div>
 </template>
@@ -76,7 +76,7 @@ export default {
 
           this.index = postIndex
           this.hasOlder = postIndex > 0
-          this.hasNewer = postIndex !== list.length - 1
+          this.hasNewer = postIndex !== list.length - 1 && postIndex !== 0
           this.list = list
         })
         .catch(err => {
@@ -104,5 +104,6 @@ export default {
 </script>
 
 <style scoped>
+
 </style>
 
