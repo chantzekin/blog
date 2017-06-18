@@ -1,6 +1,6 @@
 ---
 title: JavaScript30 学习笔记 07 - Array Cardio Day 2
-date: 2016-12-31
+date: 2017-01-03
 ---
 
 # 06 - Type Ahead
