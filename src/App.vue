@@ -13,7 +13,7 @@
     </p>
     <router-view class="main"></router-view>
   </div>
-</template>
+</template> 
 
 <script>
 import config from './config'
